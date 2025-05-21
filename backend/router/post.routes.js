@@ -25,28 +25,19 @@ app.get("/all", async (req, res) => {
 });
 
 // GET THE POST
-app.get("/:id", authentication,async (req, res) => {
-  const userId = req.params.id;
-
-  // Check for valid MongoDB ObjectId format
-  if (!mongoose.Types.ObjectId.isValid(userId)) {
-    return res.status(400).json({ success: false, message: "Invalid user ID" });
-  }
-
+app.get("/:id", authentication, async (req, res) => {
+  console.log(req.user_.id, ":req.user_.id");
+  const postId = req.params.id;
+  console.log(postId,'postIdpostId');
   try {
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" });
-    }
-
-    const { password, ...others } = user.toObject();
-    res.status(200).json({ success: true, user: others });
+    const post = await Post.find({ _id: postId });
+    res.send({ success: true, msg: post });
+    console.log(post, "post of single user.");
   } catch (err) {
-    console.error("Error fetching user:", err);
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, msg: err });
+    console.log(err, "err is getting single user post.");
   }
 });
-
 
 //CREATE
 app.post("/create", authentication, async (req, res) => {
@@ -85,41 +76,47 @@ app.post("/create", authentication, async (req, res) => {
 
 //UPDATE POST
 app.put("/update/:id", authentication, async (req, res) => {
+  const postId = req.params.id;
+  console.log(postId,'postId');
   try {
-    const post = await Post.findById(req.params.id);
-    const updatedPost = await Post.findByIdAndUpdate(
-      { _id: req.params.id },
-      {
-        $set: req.body,
-      },
-      { new: true }
-    );
-    res.send({ msg: "Updated Successfully", updatedPost });
+    const post = await Post.findById({_id: postId});
+    console.log(post, "postpostpostpost");
+    post.title = req.body.title;
+    post.desc = req.body.desc;
+   const updatedPost= await post.save();
+    
+    res.send({ success: true, msg: "Updated Successfully", msg:updatedPost });
+    console.log(updatedPost, ":their is updated post");
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ success: false, msg: err });
   }
 });
 
 // DELETE
 app.delete("/delete/:id", authentication, async (req, res) => {
+  const postId=req.params.id;
+  console.log(postId,'delete postid');
   try {
-    await Post.findByIdAndDelete({ _id: req.params.id });
-    res.send({ msg: "Deleted Successfully" });
+    await Post.findByIdAndDelete({ _id: postId });
+    res.send({ success: true, status: 200, msg: "Deleted Successfully" });
+    console.log("delete successfully.");
   } catch (err) {
-    res.status(500).json(err);
+    res.status(500).json({ success: false, msg: err });
   }
 });
 
 // GET ALL MY POST
-app.get("/mypost", authentication, async (req, res) => {
-  const { userId } = req.body;
-  res.send("id is" + userId);
-  // try {
-  //     const post=await Post.find(req.body.userId)
-  //     res.send({msg:post})
-  // } catch (err) {
-  //   res.status(500).json(err);
-  // }
+app.get("/mypost/posts", authentication, async (req, res) => {
+  try {
+    const posts = await Post.find({ userId: req.userId });
+    res.send({ success: true, msg: posts });
+    console.log(posts, "posts");
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, error: "Something went wrong", details: err });
+    console.log(err, "error in getting my post");
+  }
 });
 
 module.exports = app;

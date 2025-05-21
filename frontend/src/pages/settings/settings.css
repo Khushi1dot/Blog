@@ -25,6 +25,11 @@
   cursor: pointer;
 }
 
+.settingsTitleMyPost {
+  color: rgb(12, 12, 12);
+  font-size: 12px;
+  cursor: pointer;
+}
 .settingsForm {
   display: flex;
   flex-direction: column;

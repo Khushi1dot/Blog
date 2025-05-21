@@ -7,8 +7,9 @@ const authObj = {
   login: (object) => store.dispatch(Action.login(object)),
   register:(object)=> store.dispatch(Action.register(object)),
   logout: () =>store.dispatch(Action.logout()),
-  update:(updateData)=>store.dispatch(Action.updateUser(updateData)),
+  update:(id,updateData)=>store.dispatch(Action.updateUser(id,updateData)),
   getUser:()=>store.dispatch(Action.getUser()),
+  deleteUser:(userId)=>store.dispatch(Action.deleteUser(userId)),
 };
 
 export default authObj;

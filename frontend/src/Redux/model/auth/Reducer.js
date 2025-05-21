@@ -56,7 +56,7 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload.user,
-        access_token: state.access_token,
+        // access_token: state.access_token,
         isFetching: false,
         error: false,
       };
@@ -82,6 +82,10 @@ const authReducer = (state = initialState, action) => {
         isFetching: false,
         error: false,
       };
+      case CONSTANT.DELETE_USER:
+        return{
+          ...initialState,
+        }
     default:
       return state;
   }

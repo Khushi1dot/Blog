@@ -1,0 +1,33 @@
+.about {
+  padding: 2rem;
+  max-width: 800px;
+  margin: auto;
+  color: #333;
+  line-height: 1.6;
+}
+
+.aboutContent h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: #444;
+}
+
+.aboutContent h2 {
+  margin-top: 2rem;
+  color: #555;
+}
+
+.aboutContent ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.aboutContent li {
+  margin: 0.5rem 0;
+}
+
+.thanks {
+  margin-top: 2rem;
+  font-style: italic;
+  font-size: 1.1rem;
+}

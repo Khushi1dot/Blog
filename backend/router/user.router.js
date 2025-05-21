@@ -70,9 +70,18 @@ app.post("/login", async (req, res) => {
     }
     
     if (result) {
-      const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1h",
-      });
+      const token = jwt.sign(
+  {
+    userId: user._id,
+    user_: {
+      id: user._id,
+      name: user.name,
+      email: user.email,
+    },
+  },
+  process.env.JWT_SECRET,
+  { expiresIn: "1h" }
+);
 
       const { password, ...others } = user._doc;
       res.status(200).json({
@@ -81,59 +90,62 @@ app.post("/login", async (req, res) => {
         user: others,
       });
     } else {
-      res.send({ success: false, msg: "Invalid Credentials" });
+      return res.status(401).json({ success: false, message: "Invalid credentials" });
+
     }
   });
 });
 
 //UPDATE
-// app.put("/update/:id",authentication,async (req,res)=>{
-//     if (req.body.userId === req.params.id) {
-//         if (req.body.password) {
-//           const salt = await bcrypt.genSalt(5);
-//           req.body.password = await bcrypt.hash(req.body.password, salt);
-//         }
-//         try {
-//           const updatedUser = await User.findByIdAndUpdate(
-//             req.params.id,
-//             {
-//               $set: req.body,
-//             },
-//             { new: true }
-//           );
-//           res.status(200).json(updatedUser);
-//         } catch (err) {
-//           res.status(500).json(err);
-//         }
-//       } else {
-//         res.status(401).json("You can update only your account!");
-//       }
+app.put("/update/:id",authentication,async (req,res)=>{
+    if (req.userId === req.params.id) {
+        if (req.body.password) {
+          const salt = await bcrypt.genSalt(5);
+          req.body.password = await bcrypt.hash(req.body.password, salt);
+        }
+        try {
+          const user=await User.findById(req.params.id);
+          console.log(user,'user for updation');
+          user.username=req.body.username;
+          user.email=req.body.email;
+          user.password=req.body.password;
 
-// })
+          
+          const updatedUser = await user.save();
+          console.log(updatedUser,'user is updated');
+          res.status(200).json({success:true,status:200,updatedUser});
+        } catch (err) {
+          res.status(500).json(err);
+        }
+      } else {
+        res.status(401).json("You can update only your account!");
+      }
 
-app.put("/update/", authentication, async (req, res) => {
-  if (req.userId === req.params.id) {
-    if (req.body.password) {
-      const salt = await bcrypt.genSalt(5);
-      req.body.password = await bcrypt.hash(req.body.password, salt);
-    }
-    try {
-      const updatedUser = await User.findByIdAndUpdate(
-        req.params.id,
-        { $set: req.body },
-        { new: true }
-      );
-      res.status(200).json({success:true,updatedUser,msg:'user details updated successfully'});
-    } catch (err) {
-      res.status(500).json(err);
-    }
-  } else {
-    res.status(401).json({success:false ,msg:"You can update only your account!"});
-  }
-  console.log("BODY:", req.body);
-  console.log("PARAMS.ID:", req.params.id);
-  console.log("USERID FROM TOKEN:", req.userId);
-});
+})
+
+// app.put("/update/", authentication, async (req, res) => {
+//   if (req.userId === req.params.id) {
+//     if (req.body.password) {
+//       const salt = await bcrypt.genSalt(5);
+//       req.body.password = await bcrypt.hash(req.body.password, salt);
+//     }
+//     try {
+//       const updatedUser = await User.findByIdAndUpdate(
+//         req.params.id,
+//         { $set: req.body },
+//         { new: true }
+//       );
+//       res.status(200).json({success:true,updatedUser,msg:'user details updated successfully'});
+//     } catch (err) {
+//       res.status(500).json(err);
+//     }
+//   } else {
+//     res.status(401).json({success:false ,msg:"You can update only your account!"});
+//   }
+//   console.log("BODY:", req.body);
+//   console.log("PARAMS.ID:", req.params.id);
+//   console.log("USERID FROM TOKEN:", req.userId);
+// });
 
 
 app.get("/", authentication, async (req, res) => {
@@ -172,21 +184,23 @@ app.get("/", authentication, async (req, res) => {
 
   
 app.delete("/delete/:id", authentication, async (req, res) => {
-  if (req.body.userId === req.params.id) {
+  if (req.userId === req.params.id) {
     try {
       const user = await User.findById(req.params.id);
+      console.log(user,'user...');
       try {
         await Post.deleteMany({ username: user.username });
         await User.findByIdAndDelete(req.params.id);
-        res.status(200).json("User has been deleted...");
+        res.status(200).json({msg:"User has been deleted...",succes:true});
       } catch (err) {
         res.status(500).json(err);
       }
-    } catch (err) {
-      res.status(404).json("User not found!");
+    } catch (error) {
+      console.error(error,'error in deleting user account');
+      res.status(404).json({msg:"User not found!",success:false});
     }
   } else {
-    res.status(401).json("You can delete only your account!");
+    res.status(401).json({msg:"You can delete only your account!",success:false});
   }
 });
 

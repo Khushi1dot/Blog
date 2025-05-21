@@ -12,3 +12,5 @@ export const GET_USER='GET_USER';
 export const UPDATE_START="UPDATE_START";
 export const UPDATE_SUCCESS="UPDATE_SUCCESS";
 export const UPDATE_FAILURE="UPDATE_FAILURE";
+
+export const DELETE_USER='DELETE_USER';

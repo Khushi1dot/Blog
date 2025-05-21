@@ -1,64 +1,80 @@
 import "./settings.css";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,Link} from "react-router-dom";
 import { injectModels } from "../../Redux/injectModel";
-import axios from "axios";
+
+
 
 function Settings(props) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    const [file, setFile] = useState(null);
-    const PF = "https://radheblog-production.up.railway.app/images/"
+    // const [file, setFile] = useState(null);
+    // const PF = "https://radheblog-production.up.railway.app/images/"
 
   // const [success, setSuccess] = useState(true);
 
-  useEffect(() => {
- props.auth.getUser();
-    console.log(props.auth);
-    // if (userDetails) {
-    //   const parsedUser = JSON.parse(userDetails);
-    //   console.log(parsedUser, "userDetails");
-    //   setUsername(parsedUser.username || "");
-    //   setEmail(parsedUser.email || "");
-    // }
-  }, [props.auth]);
 
+const {user,getUser}=props.auth;
+ useEffect(()=>{
+  const token=localStorage.getItem('access_token');
+  if(token &&!user){
+    getUser()
+  }
+ },[]);
+
+ const handleDelete = async (e)=>{
+  e.preventDefault();
+  try{
+    if (!user || !user._id) {
+        console.error("User ID not found.");
+        return;
+      }
+  const response =await props.auth.deleteUser(user._id);
+  console.log(response,'response for deleting user');
+  if(response&& response.success!==false){
+    localStorage.removeItem("access_token");
+      localStorage.removeItem("isAuthenticated");
+    navigate('/signup')
+    }
+    }catch(err){
+      console.log(err);
+    }
+  }
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const {user} =props.auth;
     console.log(user);
      if (!user) {
       navigate("/login");
       return;
     }
-    const parsedUserDetails = JSON.parse(user);
-    console.log(parsedUserDetails);
 
+    
     const updatedUser = {
       username,
       email,
       password,
     };
 
-    if (file) {
-      const data =new FormData();
-      const filename = Date.now() + file.name;
-      data.append("name", filename);
-      data.append("file", file);
-      updatedUser.photo = filename;
-      try {
-        await axios.post("https://blogapp-6huo.onrender.com/upload", data);
+    // if (file) {
+    //   const data =new FormData();
+    //   const filename = Date.now() + file.name;
+    //   data.append("name", filename);
+    //   data.append("file", file);
+    //   updatedUser.photo = filename;
+    //   try {
+    //     await axios.post("https://blogapp-6huo.onrender.com/upload", data);
 
-      } catch (err) {
-        console.log(err)
-      }
-    }
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    // }
 
     try {
-      const response = await props.auth.update(updatedUser);
+      const response = await props.auth.update(user._id,updatedUser);
       console.log("Response from setting :", response);
 
       if (response && response.success === true) {
@@ -68,14 +84,21 @@ function Settings(props) {
       console.error("Updating user details error:", error);
       alert("Something went wrong. Please try again.");
     }
-  };
+    
+  }
   return (
     <div className="settings">
       <div className="settingsWrapper">
         <div className="settingsTitle">
           <span className="settingsTitleUpdate">Update Your Account</span>
-          <span className="settingsTitleDelete">Delete Account</span>
-        </div>
+          <span className="settingsTitleDelete" onClick={handleDelete}>Delete Account</span>
+   <span className="settingsTitleMyPost"> 
+    {  user && (
+                   <Link className="link" to="/mypost">
+                     <main>MyPost</main></Link>
+                ) }
+                </span>
+                  </div>
         <form className="settingsForm" onSubmit={handleSubmit}>
           {/* <label>Profile Picture</label> */}
           <div className="settingsPP">

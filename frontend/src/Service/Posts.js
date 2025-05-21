@@ -21,7 +21,7 @@ console.log(url);
 };
 
 
-export const Create_Post = async (postData, token) => {
+export const CreatePost = async (postData, token) => {
   try {
     console.log('creating post')
     const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.CREATE_POST}`;
@@ -29,7 +29,6 @@ export const Create_Post = async (postData, token) => {
     const response = await axios.post(url, postData, {
       headers: {
         'Authorization': `Bearer ${token}`,
-        
       },
     });
     console.log("Post creation response:", response);
@@ -46,3 +45,93 @@ export const Create_Post = async (postData, token) => {
     return { success: false, message: error.message };
   }
 };
+
+
+export const GetMyPost= async(token)=>{
+  try{
+    console.log('get all post');
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.GET_MY_POST}`
+    console.log('url of getting all my post',token);
+     const response =await axios.get(url,{
+      headers:{
+        'Authorization': `Bearer ${token}`,
+      }
+     })
+     console.log(response.data.msg,'response of getting my post');
+      if (response.data.success === ResponseEnum.SUCCESS) {
+         console.log(response.data.msg,'success to create post');
+      return response.data.msg; 
+    } else {
+      console.log(response.data,'failed to create post');
+      return response.data.msg;
+    }
+  } catch (error) {
+    console.error("Creating post Error:", error);
+    return { success: false, message: error.message };
+  }
+}
+
+export const GetPostById = async(id,token)=>{
+  try{
+    const url=`${REACT_APP_API_BASE_URL}${API_ENDPOINTS.GET_POST_BY_ID}${id}`
+    console.log(url,'url of userId for getting posts');
+    console.log(token,'token by getpostid');
+    const response=await axios.get(url,{
+      headers:{
+        'Authorization':`Bearer ${token}`,
+      }
+    });
+    console.log(response.data.msg,'response from get post by id');
+    if(response.data.success===ResponseEnum.SUCCESS){
+console.log(response.data.msg,'response after success');
+return response.data.msg;
+    }
+  }catch(error){
+     console.error("getting post by id Error:", error);
+    return { success: false, message: error.message };
+  }
+}
+
+export const DeletPostById = async(_id,token)=>{
+  try{
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.DELETE_POST_BY_ID}${_id}`
+    console.log(url,'url of delete post by id');
+    console.log(token,'token of delete post by id');
+    const response = await axios.delete(url,{
+      headers:{
+        'Authorization': `Bearer ${token}`,
+        }
+  });
+  console.log(response,'response from delete post by id');
+  console.log(response.data.msg,'res by data.msg');
+  if(response.data.success===ResponseEnum.SUCCESS){
+    console.log(response.data.msg,'response after success');
+    return response.data.msg;
+  }
+}catch(error){
+    console.error("deleting post by id Error:", error);
+    return { success: false, message: error.message };
+}
+}
+
+export const UpdatePostById= async(_id,updatedPost,token)=>{
+  try{
+    const url=`${REACT_APP_API_BASE_URL}${API_ENDPOINTS.UPDATE_POST_BY_ID}${_id}`
+    console.log(url,'url from update post by id');
+    console.log(token,'token by update post by id');
+    const response=await axios.put(url,updatedPost,{
+      headers:{
+        'Authorization':`Bearer ${token}`,
+      }
+    });
+    console.log(response,'response from updating post by id');
+    console.log(response.data.msg,'response.data.msg');
+    if(response.data.success===ResponseEnum.SUCCESS){
+      console.log(response.data.msg,'response.data.msg after success');
+      return response;
+    }
+  }catch(error){
+    console.error("Update post by id Error:",error);
+    return{success:false,msg:error.msg};
+  }
+}

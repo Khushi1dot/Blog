@@ -2,7 +2,7 @@ import authObj from "./auth/index";
 import postsObj from "./posts/index";
 const models = {
   auth: authObj,
-  posts:postsObj,
+  posts: postsObj,
 };
 
 export default models;

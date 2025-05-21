@@ -15,7 +15,27 @@ const postReducer=(state=initialState,action)=>{
                 return{
                     ...state,
                     post:action.payload,
+                };
+                 case CONSTANT.GET_MY_POST:
+                return{
+                    ...state,
+                    data:action.payload,
                 }
+                case CONSTANT.GET_POST_BY_ID:
+                    return{
+                        ...state,
+                        post:action.payload,
+                    }
+                    case CONSTANT.DELETE_POST_BY_ID:
+                        return{
+                            ...state,
+                            post:action.payload,
+                        }
+                        case CONSTANT.UPDATE_POST_BY_ID:
+                            return{
+                                ...state,
+                                post:action.payload,
+                            }
             default:
             return state;
     }

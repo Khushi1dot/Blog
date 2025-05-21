@@ -6,7 +6,7 @@ const REACT_APP_API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 export const registerUser = async (object) => {
   try {
     const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.REGISTER_USER}`;
-// console.log(url)
+    // console.log(url)
     const response = await axios.post(url, object, {
       headers: {
         "Content-Type": "application/json",
@@ -28,7 +28,7 @@ export const registerUser = async (object) => {
 export const loginUser = async (object) => {
   try {
     const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.LOGIN_USER}`;
-// console.log(url)
+    console.log(url);
     const response = await axios.post(url, object, {
       headers: {
         "Content-Type": "application/json",
@@ -37,31 +37,33 @@ export const loginUser = async (object) => {
 
     console.log("data from login", response);
     console.log(response.status === ResponseEnum.STATUS, "response.status");
-    console.log(response.data.success===ResponseEnum.SUCCESS,'response .success')
+    console.log(
+      response.data.success === ResponseEnum.SUCCESS,
+      "response .success"
+    );
     if (response.data.success === ResponseEnum.SUCCESS) {
       console.log("data from login1", response.data);
       return response.data;
     } else {
-     console.log("Full response data from login:", response.data);
-      return response.data;
+      console.log("Full response data from login:", response.data);
+      throw new Error(response.data.message || "Invalid email or password");
     }
   } catch (error) {
     console.error("Login Error:", error);
-    return { success: false, message: error.message };
+    throw error;
+    // return { success: false, message: error.message };
   }
 };
 
-
-export const updateUser = async ( updateData, token) => {
+export const updateUser = async (id, updateData, token) => {
   try {
-   
     if (!token) {
       throw new Error("Token is missing");
     }
 
-    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.UPDATE_USER}`;
-    console.log("Update URL:", url); 
-
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.UPDATE_USER_BY_Id}${id}`;
+    console.log("Update URL:", url);
+    console.log(token, "token from update auth");
     const response = await axios.put(url, updateData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -71,17 +73,16 @@ export const updateUser = async ( updateData, token) => {
     console.log("Response from Update User:", response);
 
     console.log(response.status === ResponseEnum.STATUS, "response.status");
-    console.log(response.data.success===ResponseEnum.SUCCESS,'response .success')
+    console.log(
+      response.data.success === ResponseEnum.SUCCESS,
+      "response .success"
+    );
     if (response.data.success === ResponseEnum.SUCCESS) {
-      
-      // const {  token: newToken } = response.data;  
-      
-      // localStorage.setItem("access_token", newToken); 
       console.log("User updated successfully:", response.data);
       return response.data;
     } else {
       console.log("User update failed:", response.data);
-      return response.data; 
+      return response.data;
     }
   } catch (error) {
     console.error("Update User Error:", error);
@@ -89,11 +90,10 @@ export const updateUser = async ( updateData, token) => {
   }
 };
 
-
-export const getUser = async ( token) => {
+export const getUser = async (token) => {
   try {
     if (!token) throw new Error("Missing token");
-const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.GET_USER}`;
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.GET_USER}`;
 
     const response = await axios.get(url, {
       headers: {
@@ -102,12 +102,32 @@ const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.GET_USER}`;
     });
 
     if (response.status === ResponseEnum.STATUS) {
-      console.log(response.data,'success in fetching user data');
-      return  response.data; 
-    } 
+      console.log(response.data, "success in fetching user data");
+      return response.data;
+    }
   } catch (error) {
     console.error("Error in getUser API:", error);
     return { success: false, message: error.message };
   }
 };
 
+export const deleteUser = async (token, id) => {
+  try {
+    if (!token) throw new Error("Missing token");
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.DELETE_USER_BY_ID}${id}`;
+    console.log(url, "url of delete account");
+    const response = await axios.delete(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (response.status === ResponseEnum.STATUS) {
+      console.log(response.data, "success in deleting user data");
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error in deleteUser API:", error);
+    return { success: false, message: error.message };
+  }
+};

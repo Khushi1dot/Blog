@@ -47,7 +47,11 @@
 .topListItem:hover{
     color: gray;
 }
-
+span{
+  font-size: 18px;
+  font-weight: 300;
+  color:black;
+}
 .topImg {
   width: 40px;
   height: 40px;

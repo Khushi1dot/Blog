@@ -9,19 +9,19 @@ const authentication = (req, res, next) => {
   const token = authHeader.split(" ")[1];
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);  
-    req.userId = decoded.userId; 
-    console.log('decoded')
-    next(); 
-    console.log("DECODED:", decoded);
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.userId = decoded.userId;
+    req.user_ = decoded.user_;
+
+    console.log("AUTH HEADER:", req.headers.authorization);
+    console.log("REQ.USERID:", req.userId);
+    console.log("REQ.USER_.ID:", req.user_.id);
+
+    next();
   } catch (err) {
     console.log("Auth error:", err);
     return res.status(401).send("Invalid or expired token");
   }
-  console.log("AUTH HEADER:", req.headers.authorization);
-console.log("REQ.USERID:", req.userId);
-
 };
 
 module.exports = authentication;
-

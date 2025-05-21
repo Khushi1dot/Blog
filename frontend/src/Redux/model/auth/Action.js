@@ -26,6 +26,7 @@ export const login = (object) => async (dispatch) => {
       alert("Login successful");
       return response;
     } else {
+      console.log("Invalid user:Login Failed");
       dispatch({ type: CONSTANTS.LOGIN_FAILURE });
     }
   } catch (error) {
@@ -49,25 +50,23 @@ export const register = (object) => async (dispatch) => {
     console.error("Register error:", error);
   }
 };
-export const updateUser = (updateData) => async (dispatch) => {
+export const updateUser = (id, updateData) => async (dispatch) => {
   dispatch({ type: CONSTANTS.UPDATE_START });
 
   try {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     const token = localStorage.getItem("access_token");
-console.log(token);
-console.log(isAuthenticated);
-    const response = await Auth.updateUser( updateData, token);
-    console.log(response,'response of updating user.')
-    if (response.token) {
-      const{token}=response;
-      console.log(token,'token');
+    console.log(token);
+    console.log(isAuthenticated);
+    const response = await Auth.updateUser(id, updateData, token);
+    console.log(response, "response of updating user.");
+    if (response.success) {
       dispatch({
         type: CONSTANTS.UPDATE_SUCCESS,
-        payload: {user:response.data,token},
+        payload: { user: response.data },
       });
       alert("Profile updated successfully");
-      console.log(response,'user data after updating')
+      console.log(response, "user data after updating");
       return response;
     } else {
       dispatch({ type: CONSTANTS.UPDATE_FAILURE });
@@ -78,14 +77,13 @@ console.log(isAuthenticated);
   }
 };
 
-
 export const getUser = () => async (dispatch) => {
   try {
-      console.log('getuser running');
+    console.log("getuser running");
     const token = localStorage.getItem("access_token");
     console.log(token);
     const response = await Auth.getUser(token);
-    console.log('getuser in action.js', response);
+    console.log("getuser in action.js", response);
 
     if (response.success) {
       dispatch({
@@ -100,7 +98,6 @@ export const getUser = () => async (dispatch) => {
   }
 };
 
-
 // LOGOUT ACTION
 export const logout = () => (dispatch) => {
   localStorage.removeItem("access_token");
@@ -108,4 +105,20 @@ export const logout = () => (dispatch) => {
 
   dispatch({ type: CONSTANTS.LOGOUT });
   dispatch({ type: CONSTANTS.GET_USER, payload: { user: null } });
+};
+
+export const deleteUser = (userId) => async (dispatch) => {
+  try {
+    const token = localStorage.getItem("access_token");
+    const response = await Auth.deleteUser(token, userId);
+    console.log("delete user response", response);
+    if (response.success) {
+      dispatch({ type: CONSTANTS.DELETE_USER });
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("isAuthenticated");
+    }
+    return response;
+  } catch (error) {
+    console.error("delete user error", error);
+  }
 };

@@ -62,12 +62,15 @@ const Login=(props)=> {
         const response = await props.auth.login(object); 
   
         // Log the response for debugging
-        console.log('Response from login :', response);
+        // console.log('Response from login :', response);
   
         if (response && response.success === true) {
           // If the login is successful, redirect
           navigate("/");
-        } 
+        } else{
+          // setErrorEmail("Invalid email or password");
+          console.log('Invalid user');
+        }
       } catch (error) {
         console.error("Login error:", error);
         alert("Something went wrong. Please try again.");
