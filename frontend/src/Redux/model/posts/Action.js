@@ -127,3 +127,19 @@ export const updatePostById=(id,updatedPost) => async(dispatch)=>{
     return{success:false,msg:error.msg};
   }
 }
+
+export const image=(token,formData)=>async(dispatch)=>{
+  try{
+    const response=await Posts.image(token,formData);
+    console.log(response,'response from image');
+    dispatch({
+      type:CONSTANT.IMAGE,
+      payload:response,
+    })
+    console.log(response,'response after dispatch for image ');
+    return response;
+    }catch(error){
+      console.error(error,'issue in image');
+      return {success:false,msg:error.msg};
+      }
+}
