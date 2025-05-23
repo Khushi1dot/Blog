@@ -11,6 +11,7 @@ const app = express();
 const path = require("path");
 const PORT = process.env.PORT;
 const MONGO_URL = process.env.MONGODB_URL || 8080;
+const fs = require("fs");
 const allowedOrigins = ["http://localhost:3000"];
 const corsOptions = {
   origin: function (origin, callback) {
@@ -41,17 +42,42 @@ mongoose
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "images");
+     cb(null, path.join(__dirname, "images"));
   },
   filename: (req, file, cb) => {
-    cb(null, req.body.name);
+   const safeName = Date.now() + "-" + file.originalname.replace(/\s+/g, "_");
+
+  cb(null, safeName);
+  console.log("Saving to path:", path.join(__dirname, "images"));
+console.log("File exists:", fs.existsSync(safeName));
   },
+  
 });
 
 const upload = multer({ storage: storage });
-app.post("/upload", upload.single("file"), (req, res) => {
-  res.status(200).json("File has been uploaded");
+console.log(upload,'upload');
+try {
+  app.post("/upload", upload.single("file"), (req, res) => {
+  // console.log(upload,'upload');
+  // console.log(file,'file');
+  // res.status(200).json("File has been uploaded",upload);
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    console.log("Uploaded file:", req.file);
+
+    res.status(200).json({
+      message: "File uploaded successfully",
+      filename: req.file.filename,
+      filePath: `/images/${req.file.filename}`,
+    });
 });
+} catch (error) {
+  res.status(500).json({"file not uploaded" : error});
+  console.log(error,'error in uploading file');
+}
+
 
 app.use("/user", user);
 app.use("/post", post);

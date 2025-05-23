@@ -6,7 +6,7 @@ export default function About() {
       <div className="aboutContent">
         <h1>About This Blog</h1>
         <p>
-          Welcome to <strong>Radhe Blog</strong> – a platform where ideas, stories, and inspiration come to life.
+          Welcome to <strong>Radhe Blog</strong> - a platform where ideas, stories, and inspiration come to life.
           Whether you're here to share your thoughts, discover new perspectives, or just read something interesting,
           this is the place for you.
         </p>

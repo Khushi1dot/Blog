@@ -131,3 +131,5 @@ export const deleteUser = async (token, id) => {
     return { success: false, message: error.message };
   }
 };
+
+

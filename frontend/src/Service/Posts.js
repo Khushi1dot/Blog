@@ -135,3 +135,22 @@ export const UpdatePostById= async(_id,updatedPost,token)=>{
     return{success:false,msg:error.msg};
   }
 }
+
+export const image = async (token,formData) => {
+  try {
+    const url = `${REACT_APP_API_BASE_URL}${API_ENDPOINTS.IMAGE}`;
+    const response = await axios.post(url,formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+         
+      },
+    });
+    if (response.status === ResponseEnum.STATUS) {
+      console.log(response.data, "success in fetching image data");
+      return response.data;
+    }
+  } catch (error) {
+    console.error("Error in image API:", error);
+    return { success: false, message: error.message };
+  }
+};

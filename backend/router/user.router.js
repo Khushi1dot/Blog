@@ -84,11 +84,7 @@ app.post("/login", async (req, res) => {
 );
 
       const { password, ...others } = user._doc;
-      res.status(200).json({
-        success: true,
-        token: token,
-        user: others,
-      });
+      res.status(200).json({ success: true, token: token, user: others});
     } else {
       return res.status(401).json({ success: false, message: "Invalid credentials" });
 

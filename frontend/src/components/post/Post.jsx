@@ -9,24 +9,22 @@ export default function Post({
   desc,
   createdAt,
 }) {
-  const PF = "https://blogapp-6huo.onrender.com/images/";
+const PF = "http://localhost:8080/images/";
+console.log(PF,'pffff')
   return (
     <div className="post">
       {photo && <img className="postImg" src={PF + photo} alt="" />}
 
       <div className="postInfo">
         <div className="postCats">
-          {categories.map((el) => {
-            return (
-              <>
-                <span className="postCat">
-                  <Link className="link" to={`/posts?cat=${el}`}>
-                    {el}
-                  </Link>
-                </span>
-              </>
-            );
-          })}
+          {categories.map((el) => (
+  <span key={el} className="postCat">
+    <Link className="link" to={`/posts?cat=${el}`}>
+      {el}
+    </Link>
+  </span>
+))}
+
         </div>
 
         {/* <div className="postCats">

@@ -17,7 +17,8 @@ function App(props) {
 
   useEffect(() => {
     const token = localStorage.getItem("access_token");
-    if (token && !user) {
+    const isAuthenticated= localStorage.getItem("isAuthenticated");
+    if (token && isAuthenticated && !user) {
       getUser();
     }
   }, [user, getUser]);

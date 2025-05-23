@@ -41,7 +41,7 @@ app.get("/:id", authentication, async (req, res) => {
 
 //CREATE
 app.post("/create", authentication, async (req, res) => {
-  const { title, desc, username } = req.body;
+  const { title, desc, username,photo } = req.body;
 
   if (!title || !desc) {
     return res
@@ -54,6 +54,7 @@ app.post("/create", authentication, async (req, res) => {
     desc,
     username,
     userId: req.userId,
+    photo,
   });
 
   try {

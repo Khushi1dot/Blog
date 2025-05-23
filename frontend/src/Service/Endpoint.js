@@ -10,4 +10,5 @@ export const API_ENDPOINTS = {
     GET_POST_BY_ID:'/post/',
     DELETE_POST_BY_ID:'/post/delete/',
     UPDATE_POST_BY_ID:'/post/update/',
+    IMAGE:'/upload',
 }

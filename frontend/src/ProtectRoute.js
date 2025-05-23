@@ -6,9 +6,11 @@ function ProtectRoutes() {
   const getAuth = localStorage.getItem("isAuthenticated");
   // console.log(getAuth);
   // console.log(access_token);
-  if (access_token && getAuth ) {
+  if (access_token && getAuth) {
     return <Outlet />;
   } else {
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("isAuthenticated");
     return <Navigate to="/login" />;
   }
 }

@@ -46,9 +46,11 @@ console.log(user,'fetching user from write comp.')
       data.append("name", filename);
       data.append("file", file);
       newPost.photo = filename;
-
+console.log(file);
       try {
-        await axios.post("https://blogapp-6huo.onrender.com/upload", data);
+        const token=localStorage.getItem('access_token');
+        const response=await props.posts.image(token,data);
+        console.log(response);
       } catch (err) {
         console.log("Error during file upload:", err);
       }

@@ -1,58 +1,54 @@
 import "./settings.css";
 import Sidebar from "../../components/sidebar/Sidebar";
 import { useEffect, useState } from "react";
-import { useNavigate ,Link} from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { injectModels } from "../../Redux/injectModel";
-
-
 
 function Settings(props) {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-    // const [file, setFile] = useState(null);
-    // const PF = "https://radheblog-production.up.railway.app/images/"
+  // const [file, setFile] = useState(null);
+  // const PF = "https://radheblog-production.up.railway.app/images/"
 
   // const [success, setSuccess] = useState(true);
 
+  const { user, getUser } = props.auth;
+  useEffect(() => {
+    const token = localStorage.getItem("access_token");
+    if (token && !user) {
+      getUser();
+    }
+  }, []);
 
-const {user,getUser}=props.auth;
- useEffect(()=>{
-  const token=localStorage.getItem('access_token');
-  if(token &&!user){
-    getUser()
-  }
- },[]);
-
- const handleDelete = async (e)=>{
-  e.preventDefault();
-  try{
-    if (!user || !user._id) {
+  const handleDelete = async (e) => {
+    e.preventDefault();
+    try {
+      if (!user || !user._id) {
         console.error("User ID not found.");
         return;
       }
-  const response =await props.auth.deleteUser(user._id);
-  console.log(response,'response for deleting user');
-  if(response&& response.success!==false){
-    localStorage.removeItem("access_token");
-      localStorage.removeItem("isAuthenticated");
-    navigate('/signup')
-    }
-    }catch(err){
+      const response = await props.auth.deleteUser(user._id);
+      console.log(response, "response for deleting user");
+      if (response && response.success !== false) {
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("isAuthenticated");
+        navigate("/signup");
+      }
+    } catch (err) {
       console.log(err);
     }
-  }
-  
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log(user);
-     if (!user) {
+    if (!user) {
       navigate("/login");
       return;
     }
 
-    
     const updatedUser = {
       username,
       email,
@@ -74,7 +70,7 @@ const {user,getUser}=props.auth;
     // }
 
     try {
-      const response = await props.auth.update(user._id,updatedUser);
+      const response = await props.auth.update(user._id, updatedUser);
       console.log("Response from setting :", response);
 
       if (response && response.success === true) {
@@ -84,21 +80,23 @@ const {user,getUser}=props.auth;
       console.error("Updating user details error:", error);
       alert("Something went wrong. Please try again.");
     }
-    
-  }
+  };
   return (
     <div className="settings">
       <div className="settingsWrapper">
         <div className="settingsTitle">
           <span className="settingsTitleUpdate">Update Your Account</span>
-          <span className="settingsTitleDelete" onClick={handleDelete}>Delete Account</span>
-   <span className="settingsTitleMyPost"> 
-    {  user && (
-                   <Link className="link" to="/mypost">
-                     <main>MyPost</main></Link>
-                ) }
-                </span>
-                  </div>
+          <span className="settingsTitleDelete" onClick={handleDelete}>
+            Delete Account
+          </span>
+          <span className="settingsTitleMyPost">
+            {user && (
+              <Link className="link" to="/mypost">
+                <main>MyPost</main>
+              </Link>
+            )}
+          </span>
+        </div>
         <form className="settingsForm" onSubmit={handleSubmit}>
           {/* <label>Profile Picture</label> */}
           <div className="settingsPP">

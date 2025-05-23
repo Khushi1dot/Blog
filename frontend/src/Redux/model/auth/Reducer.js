@@ -56,7 +56,6 @@ const authReducer = (state = initialState, action) => {
       return {
         ...state,
         user: action.payload.user,
-        // access_token: state.access_token,
         isFetching: false,
         error: false,
       };

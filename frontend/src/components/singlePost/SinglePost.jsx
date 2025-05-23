@@ -12,7 +12,8 @@ function SinglePost(props) {
   const [title, setTitle] = useState("");
   const [desc, setDesc] = useState("");
   const [updateMode, setUpdateMode] = useState(false);
-  const pf = "https://blogapp-6huo.onrender.com/images/";
+  const pf = "http://localhost:8080/images/";
+
 
   const { user, getUser } = props.auth;
 
@@ -27,7 +28,6 @@ function SinglePost(props) {
           console.error("Invalid post data", postData);
           return;
         }
-
         setPost(postData);
         setTitle(postData.title);
         setDesc(postData.desc);
@@ -49,6 +49,7 @@ function SinglePost(props) {
   const handleDelete = async () => {
     try {
       const response = await props.posts.deletePostById(id);
+      console.log(response,'response');
       if (response && response.success) {
         navigate("/");
       }
@@ -77,6 +78,7 @@ function SinglePost(props) {
         {post.photo && (
           <img className="singlePostImg" src={pf + post.photo} alt="Post" />
         )}
+        
 
         {updateMode ? (
           <input
